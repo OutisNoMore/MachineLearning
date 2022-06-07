@@ -1,43 +1,15 @@
 #include "MLToolKit.hpp"
 
-MLToolKit::MLToolKit(std::string fileName){
-  std::string line;
-  std::ifstream dataFile(fileName);
-
-  if(dataFile.is_open()){
-    int i = 0;
-    while(getline(dataFile, line)){
-      dataX.push_back(std::vector<double>());
-      while(line.size() > 0){
-        int commaIndex = line.find(",");
-        if(commaIndex == -1){
-          if(line.find("veriscolor") == std::string::npos){
-            output.push_back(1);
-          } else{
-            output.push_back(-1);
-          }
-          line = "";
-        }
-        else{
-          double element = std::stod(line.substr(0, commaIndex));
-          dataX[i].push_back(element);
-          line = line.substr(commaIndex + 1);
-        }
-      }
-      i++;
-    }
-    dataFile.close();
-  }
-  else{
-    throw "ERROR: File not found!";
-  }
+MLToolKit::MLToolKit(std::vector<double>& y, std::vector<std::vector<double>>& data){
+  output = y;
+  dataX = data;
 }
 
 void MLToolKit::Regression(){
   weight = MatrixMath::regression(dataX, output);
 }
 
-void MLToolKit::PerceptronLearning(){
+std::vector<double> MLToolKit::PerceptronLearning(){
   // Get initial weights using Linear Regression
   Regression();
   for(int i = 0; i < dataX.size(); i++){
@@ -55,6 +27,7 @@ void MLToolKit::PerceptronLearning(){
       weight = MatrixMath::add(weight2D, x2D)[0];
     }
   }
+  return weight;
 }
 
 std::vector<double> MLToolKit::PocketLearning(){
@@ -84,39 +57,9 @@ std::vector<double> MLToolKit::PocketLearning(){
   return pocket;
 }
 
-void MLToolKit::test(std::string fileName, std::vector<double>& w){
-  std::vector<std::vector<double>> testData;
-  std::vector<double> testOutput;
-  std::string line;
-  std::ifstream dataFile(fileName);
-
-  if(dataFile.is_open()){
-    int i = 0;
-    while(getline(dataFile, line)){
-      testData.push_back(std::vector<double>());
-      while(line.size() > 0){
-        int commaIndex = line.find(",");
-        if(commaIndex == -1){
-          if(line.find("virginica") == std::string::npos){
-            testOutput.push_back(-1);
-          } else{
-            testOutput.push_back(1);
-          }
-          line = "";
-        }
-        else{
-          double element = std::stod(line.substr(0, commaIndex));
-          testData[i].push_back(element);
-          line = line.substr(commaIndex + 1);
-        }
-      }
-      i++;
-    }
-    dataFile.close();
-  }
-  else{
-    throw "ERROR: File not found!";
-  }
+int MLToolKit::test(std::vector<double>& y, std::vector<std::vector<double>>& data, std::vector<double>& w){
+  std::vector<std::vector<double>> testData = data;
+  std::vector<double> testOutput = y;
 
   int correct = 0;
   for(int i = 0; i < testData.size(); i++){
@@ -126,21 +69,10 @@ void MLToolKit::test(std::string fileName, std::vector<double>& w){
     }
   }
 
-  std::cout << "Linear Regression Learning on Irises" << std::endl;;
-  std::cout << "-------------------------------------------" << std::endl;
-  std::cout << "Total Test Samples:           " << testData.size() << std::endl;
-  std::cout << "Total Classified Correctly:   " << correct << std::endl;
-  std::cout << "Total Classified Incorrectly: " << testData.size() - correct << std::endl;
-  std::cout << "Percent Correct:              " << (double)correct/testData.size() << std::endl;
-  std::cout << "Weight used:                  ";
-  for(int i = 0; i < w.size(); i++){
-    std::cout << w[i] << " ";
-  }
-  std::cout << std::endl;
-  std::cout << "--------------------------------------------" << std::endl;
+  return correct;
 }
 
-void MLToolKit::test(std::string fileName){
-  test(fileName, weight);
+int MLToolKit::test(std::vector<double>& y, std::vector<std::vector<double>>& data){
+  return test(y, data, weight);
 }
 

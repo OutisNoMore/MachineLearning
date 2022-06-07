@@ -6,7 +6,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <fstream>
 
 class MLToolKit{
   private:
@@ -15,12 +14,12 @@ class MLToolKit{
     std::vector<double> weight;
 
   public:
-    MLToolKit(std::string fileName);
+    MLToolKit(std::vector<double>& y, std::vector<std::vector<double>>& data);
 
     void Regression();
-    void PerceptronLearning();
-    void test(std::string fileName, std::vector<double>& w);
-    void test(std::string fileName);
+    std::vector<double> PerceptronLearning();
+    int test(std::vector<double>& y, std::vector<std::vector<double>>& data, std::vector<double>& w);
+    int test(std::vector<double>& y, std::vector<std::vector<double>>& data);
     std::vector<double> PocketLearning();
 };
 
