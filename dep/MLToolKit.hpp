@@ -1,26 +1,32 @@
 #ifndef MLTOOLKIT_H
 #define MLTOOLKIT_H
 
-#include "MatrixMath.hpp"
+#include "Matrix.hpp"
 
-#include <iostream>
-#include <string>
 #include <vector>
+#include <cmath>
 
 class MLToolKit{
   private:
-    std::vector<std::vector<double>> dataX;
-    std::vector<double> output;
-    std::vector<double> weight;
+    Matrix dataX;
+    Matrix output;
+    Matrix weight;
+
+    double LogisticFunction(double signal);
+    Matrix GradientError();
 
   public:
     MLToolKit(std::vector<double>& y, std::vector<std::vector<double>>& data);
 
-    void Regression();
-    std::vector<double> PerceptronLearning();
-    int test(std::vector<double>& y, std::vector<std::vector<double>>& data, std::vector<double>& w);
+    double error();
+    Matrix w(){return weight;}
+    void LinearRegression();
+    Matrix PerceptronLearning();
+    Matrix PocketLearning();
+    Matrix LogisticRegression();
+    int test(std::vector<double>& y, std::vector<std::vector<double>>& data, Matrix w);
     int test(std::vector<double>& y, std::vector<std::vector<double>>& data);
-    std::vector<double> PocketLearning();
+    int testLogistic(std::vector<double>& y, std::vector<std::vector<double>>& data);
 };
 
 #endif //MLTOOLKIT_H
