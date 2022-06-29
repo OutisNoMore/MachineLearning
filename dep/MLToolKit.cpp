@@ -94,21 +94,20 @@ Matrix MLToolKit::LogisticRegression(){
   std::vector<double> w(dataX.at(0).size(), 0.0);
   weight = Matrix{w};
   weight = weight.transpose();
-  double stepSize = 0.1; // step size of SGD
+  double stepSize = 10; // step size of SGD
   // Maximum of 10,000 loops
-  for(int i = 0; i < 10000; i++){
+  for(int i = 0; true; i++){
     Matrix error = GradientError(); // Get error
     double magnitude = error.squaredMagnitude();
-    std::cout << magnitude << std::endl;
     magnitude = sqrt(magnitude);
-    stepSize = stepSize * magnitude;
-    /*
-    if(stepSize < 0.00001 || magnitude < 0.00001){
+    double r = stepSize * magnitude;
+    
+    if(magnitude < 0.001){
       // Acceptable error no need to improve
       break;
     }
-    */
-    error = error * stepSize; //learningRate;
+    
+    error = error * r;
 
     weight = weight - error.transpose();
   }
@@ -140,12 +139,11 @@ int MLToolKit::testLogistic(std::vector<double>& y, std::vector<std::vector<doub
     Matrix x(data[i]);
     double signal = (x * weight).at(0)[0];
     double out = LogisticFunction(signal);
-    //std::cout << out << std::endl;
     int test = y[i];
     if(y[i] < 0){
       test = 0;
     }
-    //std::cout << out << std::endl;
+    std::cout << out << std::endl;
     if(fabs(out - test) < threshold){
       // tolerance of 0.1
       correct++;
