@@ -87,6 +87,22 @@ Matrix Matrix::operator-(Matrix matrixB){
   return output;
 }
 
+Matrix Matrix::identity(){
+  Matrix output;
+  for(int i = 0; i < matrix.size(); i++){
+    output.matrix.push_back(std::vector<double>());
+    for(int j = 0; j < matrix[i].size(); j++){
+      if(i == j){
+        output.matrix[i].push_back(1.0);
+      }
+      else{
+        output.matrix[i].push_back(0);
+      }
+    }
+  }
+  return output;
+}
+
 Matrix Matrix::transpose(){
   Matrix output;
   // Apply transposition/rotate matrix

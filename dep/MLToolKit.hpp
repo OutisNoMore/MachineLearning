@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <cmath>
+#include <cstdlib>
 
 class MLToolKit{
   private:
@@ -14,6 +15,7 @@ class MLToolKit{
 
     double LogisticFunction(double signal);
     Matrix GradientError();
+    double ThetaFunction(double signal);
 
   public:
     MLToolKit(std::vector<double>& y, std::vector<std::vector<double>>& data);
@@ -24,9 +26,11 @@ class MLToolKit{
     Matrix PerceptronLearning();
     Matrix PocketLearning();
     Matrix LogisticRegression();
+    std::vector<std::vector<std::vector<double>>> NeuralNetwork();
     int test(std::vector<double>& y, std::vector<std::vector<double>>& data, Matrix w);
     int test(std::vector<double>& y, std::vector<std::vector<double>>& data);
     int testLogistic(std::vector<double>& y, std::vector<std::vector<double>>& data);
+    int testNeural(std::vector<double>& y, std::vector<std::vector<double>>& data, std::vector<std::vector<std::vector<double>>>& weights);
 };
 
 #endif //MLTOOLKIT_H

@@ -21,6 +21,7 @@ class Matrix{
     Matrix operator*(double coefficient);
     Matrix operator+(Matrix& matrixB);
     Matrix operator-(Matrix matrixB);
+    Matrix identity();
     Matrix transpose();
     Matrix inverse();
     double squaredMagnitude();

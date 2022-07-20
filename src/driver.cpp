@@ -47,14 +47,19 @@ std::map<std::string, std::string> keys{
   {"none", "0"},
 };
 
-void stats(std::vector<std::vector<double>>& data, Matrix& w, int correct){
+void stats(int dataSize, Matrix& w, int correct){
   std::cout << "-------------------------------------------" << std::endl;
-  std::cout << "Total Test Samples:           " << data.size() << std::endl;
+  std::cout << "Total Test Samples:           " << dataSize << std::endl;
   std::cout << "Total Classified Correctly:   " << correct << std::endl;
-  std::cout << "Total Classified Incorrectly: " << data.size() - correct << std::endl;
-  std::cout << "Percent Correct:              " << (double)correct/data.size() << std::endl;
+  std::cout << "Total Classified Incorrectly: " << dataSize - correct << std::endl;
+  std::cout << "Percent Correct:              " << (double)correct/dataSize << std::endl;
   std::cout << "Weight used:                  " << w.toString() << std::endl;
   std::cout << "--------------------------------------------" << std::endl;
+}
+
+void stats(int dataSize, int correct){
+  Matrix w;
+  stats(dataSize, w, correct);
 }
 
 void readFile(std::string fileName, std::vector<double>& output, std::vector<std::vector<double>>& data){
@@ -82,6 +87,10 @@ void readFile(std::string fileName, std::vector<double>& output, std::vector<std
             sub = keys[sub];
           }
           double element = std::stod(sub);
+          if(std::isnan(element)){
+            std::cerr << sub << std::endl;
+            throw "Input is not a number!";
+          }
           data[i].push_back(element);
           line = line.substr(commaIndex + 1);
         }
@@ -109,37 +118,51 @@ int main(){
   try{
     std::vector<double> output;
     std::vector<std::vector<double>> data;
+    /*
     // Test Logistic Regression methods
-    readFile("data/iris-train.data", output, data);
+    readFile("data/wine-train.data", output, data);
     MLToolKit test(output, data);
     Matrix logistic = test.LogisticRegression();
     output.clear();
     data.clear();
-    readFile("data/iris-test.data", output, data);
+    readFile("data/wine-test.data", output, data);
     int correct = test.testLogistic(output, data);
     std::cout << "Logistic Regression on iris dataset" << std::endl;
-    stats(data, logistic, correct);
-
+    stats(data.size(), logistic, correct);
+    */
     /*
     // Test Linear regression methods
-    readFile("data/bank-full.csv", output, data);
+    readFile("data/wine-train.data", output, data);
     MLToolKit test(output, data);
     Matrix perceptron = test.PerceptronLearning();
     Matrix pocket = test.PocketLearning(); // weights
     output.clear();
     data.clear();
-    readFile("data/bank.csv", output, data);
+    readFile("data/wine-test.data", output, data);
     int correct = test.test(output, data, perceptron);
-    std::cout << "Linear Regression using the Perceptron Learning Algorithm on Iris" << std::endl;
-    stats(data, perceptron, correct);
+    std::cout << "Linear Regression using the Perceptron Learning Algorithm on Wine" << std::endl;
+    stats(data.size(), perceptron, correct);
     std::cout << std::endl;
-    int correct = test.test(output, data, pocket);
-    std::cout << "Linear Regression using the Pocket Learning Algorithm on Iris" << std::endl;
-    stats(data, pocket, correct);
+    correct = test.test(output, data, pocket);
+    std::cout << "Linear Regression using the Pocket Learning Algorithm on Wine" << std::endl;
+    stats(data.size(), pocket, correct);
     */
+    // Test Neural Network
+    readFile("data/iris-train.data", output, data);
+    MLToolKit test(output, data);
+    std::vector<std::vector<std::vector<double>>> weights = test.NeuralNetwork();
+    output.clear();
+    data.clear();
+    readFile("data/iris-test.data", output, data);
+    int correct = test.testNeural(output, data, weights);
+    std::cout << "Neural Network on iris dataset" << std::endl;
+    stats(data.size(), correct);
   }
   catch(const char* msg){
     std::cout << msg << std::endl;
+  }
+  catch(...){
+    std::cerr << "Error!" << std::endl;
   }
 
   return 0;
